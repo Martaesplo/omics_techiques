@@ -8,13 +8,34 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
 ## R Markdown
+
+EXERCISE 2 OMICS
 
 
 Link to my github repository:
 https://github.com/Martaesplo/omics_techniques.git
+It contains the html file too.
 
+
+- Study: 	
+Ethanol treatment of lymphoblastoid cell lines from alcoholics and non-alcoholics causes many subtle changes in gene expression
+
+- Accession number: 
+GSE52553
+
+- Description of the study: 
+To understand the effect of controlled exposure to ethanol on gene expression, lymphoblastoid cell lines (LCLs) from 21 alcoholics and 21 controls were studied after a treatment of 24 hours. Gene expression was meassured using microarrays which together with a paired design allowed to detect very small changes between the cell lines due to ethanol treatment.
+
+- Information of the experimental design:
+As mentioned before is paired design. It is composed of two factors and two groups: treatment/no-treatment and alcoholic/non-alcoholic(control). 
+The sample size is 84 and has biological origin.
+In the study the variable sex (female or male) is also specified, but we will ignore it.
+The response variable is gene expression and it depends on the ethanol treatment and if the sample is from an alcoholic LCL or not.
+And is a block design as the experimental units are in groups (blocks).
+
+
+Installation of GEOquery:
 
 ```{r geoquery}
 library(methods)
@@ -27,20 +48,27 @@ library(BiocVersion)
 BiocManager::install("GEOquery")
 require(GEOquery)
 gse <- getGEO("GSE52553")
+```
+
+
+- Brief data description:
+
+```{r data_description}
 class(gse)
 names(gse)
 gse[[1]]
-esetFromGEO <- gse[[1]]
+expg<-gse[[1]]
+dim(exprs(expg))
+class(phenoData(expg))
+head(pData(expg))
 
+targets <- data.frame(gse)
+class(targets)
+length(targets)
+names(targets)
+head(targets) #all the samples
+m <- matrix(rnorm(targets))
+hist(m, main='Histogram targets', xlab='targets', col='purple')
+boxplot(m, main='Boxplot targets', col='purple')
 
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
