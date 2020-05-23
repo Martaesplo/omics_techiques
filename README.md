@@ -1,1 +1,0 @@
-# omics_techiques
