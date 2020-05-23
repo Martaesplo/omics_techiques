@@ -1,0 +1,80 @@
+---
+title: "omics_exs"
+author: "Marta Españó López"
+date: "5/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+Link to my github repository:
+https://github.com/Martaesplo/omics_techniques.git
+
+
+```{r geoquery}
+library(methods)
+library(Biobase)
+library(BiocManager)
+library(BiocVersion)
+  if (!require(GEOquery)) {
+  BiocManager::install("GEOquery")
+}
+BiocManager::install("GEOquery")
+require(GEOquery)
+  gse <- getGEO("GSE52553")
+class(gse)
+names(gse)
+gse[[1]]
+esetFromGEO <- gse[[1]]
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure}
+workingDir <-getwd() # Remember to first do Session/Set working directory
+dataDir <- file.path(workingDir, "/datasets")
+resultsDir <- file.path(workingDir, "/results")
+setwd(workingDir)
+
+installifnot <- function (pkg){
+  if (!require(pkg, character.only=T)){
+  source("http://bioconductor.org/biocLite.R")
+  biocLite(pkg)
+}else{
+  require(pkg, character.only=T)
+  }
+}
+BiocManager::install("pd.mogene.1.0.st.v1")
+
+BiocManager::install("mogene10sttranscriptcluster.db")
+
+installifnot("pd.mogene.1.0.st.v1")
+installifnot("mogene10sttranscriptcluster.db")
+installifnot("oligo")
+installifnot("limma")
+installifnot("Biobase")
+# installifnot("arrayQualityMetrics")
+installifnot("genefilter")
+installifnot("multtest")
+installifnot("annotate")
+installifnot("gplots")
+installifnot("scatterplot3d")
+```
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
