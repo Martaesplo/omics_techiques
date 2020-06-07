@@ -21,7 +21,7 @@ https://github.com/Martaesplo/omics_techniques.git
 GEO accession number: GSE52553
 
 
-```{r packages, echo=FALSE, results='hide'}
+```{r packages, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
 installifnot <- function (pkg){
   if (!require(pkg, character.only=T)){
   source("http://bioconductor.org/install")
@@ -46,7 +46,7 @@ installifnot("scatterplot3d")
 
 Libraries needed:
 
-```{r libraries, echo=TRUE, results='hide'}
+```{r libraries, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
 library(methods)
 library(Biobase)
 library(BiocManager)
@@ -77,7 +77,7 @@ To understand the effect of controlled exposure to ethanol on gene expression, l
 First we download the GEO dataset GSE52553 and since is has a sample size of 84, we choose a subset of it containing 12 samples. Those are balanced according to the existent groups.
 
 
-```{r description, echo=TRUE, results='hide'}
+```{r description, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
 gse <- getGEO("GSE52553")
 eset<-gse[[1]]
 
@@ -93,7 +93,7 @@ targets
 ```
 
 
-```{r plots, echo=TRUE}
+```{r plots}
 pcs<-prcomp(exprs(rdeset))
 
 print(paste0('Mean of st.deviation = ',mean(pcs$sdev)))
