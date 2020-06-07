@@ -1,5 +1,5 @@
 ---
-title: "synthesis exercise"
+title: "SYNTHESIS EXERCISE"
 author: "Marta Españó López"
 date: "6/6/2020"
 output: html_document
