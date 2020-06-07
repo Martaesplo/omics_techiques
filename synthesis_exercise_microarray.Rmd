@@ -18,6 +18,10 @@ Link to my github repository:
 https://github.com/Martaesplo/omics_techniques.git
 
 
+GEO accession number: GSE52553
+
+
+Installation and libraries needed:
 
 ```{r packages, echo=FALSE}
 installifnot <- function (pkg){
@@ -38,7 +42,7 @@ installifnot("Biobase")
 BiocManager::install("genefilter")
 BiocManager::install("multtest")
 BiocManager::install("annotate")
-install("gplots")
+#install("gplots")
 installifnot("scatterplot3d")
 ```
 
@@ -61,61 +65,66 @@ library(scatterplot3d)
 ```
 
 
+DATA DESCRIPTION
 
-```{r targets}
-workingDir <-getwd() # Remember to first do Session/Set working directory
-dataDir <- file.path(workingDir, "/dataset")
-resultsDir <- file.path(workingDir, "/results")
-setwd(workingDir)
-workingDir
-```
+- Study: 	
+Ethanol treatment of lymphoblastoid cell lines from alcoholics and non-alcoholics causes many subtle changes in gene expression.
 
-```{r echo=FALSE}
+- Description of the study: 
+To understand the effect of controlled exposure to ethanol on gene expression, lymphoblastoid cell lines (LCLs) from 21 alcoholics and 21 controls were studied after a treatment of 24 hours. Gene expression was meassured using microarrays which together with a paired design allowed to detect very small changes between the cell lines due to ethanol treatment.
+
+
+First we download the GEO dataset GSE52553 and since is has a sample size of 84, we choose a subset of it containing 12 samples. Those are balanced according to the existent groups.
+
+
+```{r description, echo=FALSE}
 gse <- getGEO("GSE52553")
 eset<-gse[[1]]
 rdeset<-(eset[1:11,c(1,2,3,4,43,44,65,66,69,70,29,30)])
+
 dim(exprs(rdeset))
 dim(exprs(eset))
-
 head(rdeset)
+exprs(rdeset)
 head(exprs(rdeset))
 targets<-pData(rdeset)
-exprs(rdeset)
-length(exprs(eset[1,1]))
-
-rdset
-
-
-
+targets
 ```
 
-```{r}
+
+```{r plots, echo=TRUE}
+
+print(paste0('Mean of st.deviation = ',mean(pcs$sdev)))
 
 pcs<-prcomp(exprs(rdeset))
-pcs
-barplot(pcs$sdev)
-plot(pcs$rotation[,1], pcs$rotation[,2], main="Representation of first two principal components")
-?rpois
-#################
+barplot(pcs$sdev, col='purple', main='Un-normalized expression set')
 
+plot(pcs$rotation[,1], pcs$rotation[,2], main="Representation of first two principal components", col='purple')
+
+boxplot(pcs, col='purple', main='Boxplot expression set')
 
 ```
 
 
 
+- Information of the experimental design:
 
-```{r geod2}
-gse2<- getGEO('GSE69078')
-eset2<-gse2[[1]]
-eset2
-dim(exprs(eset2))
-```
+Response variable: Gene expression
+Depends on: ethanol Treatment and being alcoholic or not
+Factors and groups: Treatment/no treatment and alcoholic/non-alcoholic(control)
+Sample size: 12 (84 originally), 3 samples belonging to each group
+Experimental units per combination of factors: 3
+Type of experimental design: Randomized block design
+Replicate type: Biological
 
-```{r targets}
-```
+In the study the variable sex (female or male) is also specified, but we will ignore it.
 
-```{r targets}
-```
+
+-Comparisons to be performed:
+Between the parenthesis there are the number of samples of each group.
+Since we want to know the effect of both, alcohol and treatment with ethanol, to gene expression we will have to perform the following comparisons.
+
+
 
 
 
