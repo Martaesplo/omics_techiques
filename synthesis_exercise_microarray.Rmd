@@ -9,22 +9,118 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Marta Espano Lopez
+104532
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+Link to my github repository:
+https://github.com/Martaesplo/omics_techniques.git
+
+
+
+```{r packages, echo=FALSE}
+installifnot <- function (pkg){
+  if (!require(pkg, character.only=T)){
+  source("http://bioconductor.org/install")
+  biocLite(pkg)
+}else{
+  require(pkg, character.only=T)
+  }
+}
+
+installifnot("pd.mogene.1.0.st.v1")
+BiocManager::install("mogene10sttranscriptcluster.db")
+installifnot("oligo")
+installifnot("limma")
+installifnot("Biobase")
+# installifnot("arrayQualityMetrics")
+BiocManager::install("genefilter")
+BiocManager::install("multtest")
+BiocManager::install("annotate")
+install("gplots")
+installifnot("scatterplot3d")
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r libraries, echo=FALSE}
+library(methods)
+library(Biobase)
+library(BiocManager)
+library(BiocVersion)
+library(GEOquery)
+library(limma)
+library(pd.mogene.1.0.st.v1)
+library(mogene10sttranscriptcluster.db)
+library(oligo)
+library(limma)
+library(genefilter)
+library(multtest)
+library(annotate)
+library(gplots)
+library(scatterplot3d)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r targets}
+workingDir <-getwd() # Remember to first do Session/Set working directory
+dataDir <- file.path(workingDir, "/dataset")
+resultsDir <- file.path(workingDir, "/results")
+setwd(workingDir)
+workingDir
+```
+
+```{r echo=FALSE}
+gse <- getGEO("GSE52553")
+eset<-gse[[1]]
+rdeset<-(eset[1:11,c(1,2,3,4,43,44,65,66,69,70,29,30)])
+dim(exprs(rdeset))
+dim(exprs(eset))
+
+head(rdeset)
+head(exprs(rdeset))
+targets<-pData(rdeset)
+exprs(rdeset)
+length(exprs(eset[1,1]))
+
+rdset
+
+
+
+```
+
+```{r}
+
+pcs<-prcomp(exprs(rdeset))
+pcs
+barplot(pcs$sdev)
+plot(pcs$rotation[,1], pcs$rotation[,2], main="Representation of first two principal components")
+?rpois
+#################
+
+
+```
+
+
+
+
+```{r geod2}
+gse2<- getGEO('GSE69078')
+eset2<-gse2[[1]]
+eset2
+dim(exprs(eset2))
+```
+
+```{r targets}
+```
+
+```{r targets}
+```
+
+
+
+
+
+
+
+
