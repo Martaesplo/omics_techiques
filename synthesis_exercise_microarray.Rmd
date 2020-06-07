@@ -165,9 +165,13 @@ cont.matrix1
 
 - Build the topTable and a volcano plot:
 
-```{r toptable and volcano plot}
+```{r toptable, results='hide', warning=FALSE, message=FALSE}
 topTab <-  topTable (fit.main1, number=nrow(fit.main1), adjust="fdr",lfc=abs(3))
-topTab
+
+
+```
+
+```{r volcano plot}
 
 volcanoplot(fit.main1, highlight=10, names=fit.main1$ID, 
             main=paste("Differentially expressed genes",colnames(cont.matrix1), sep="\n"))
