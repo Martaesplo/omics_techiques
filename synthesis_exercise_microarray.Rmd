@@ -167,7 +167,7 @@ cont.matrix1
 
 ```{r toptable, results='hide', warning=FALSE, message=FALSE}
 topTab <-  topTable (fit.main1, number=nrow(fit.main1), adjust="fdr",lfc=abs(3))
-
+topTab
 
 ```
 
