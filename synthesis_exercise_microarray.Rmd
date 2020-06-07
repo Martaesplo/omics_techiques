@@ -21,9 +21,7 @@ https://github.com/Martaesplo/omics_techniques.git
 GEO accession number: GSE52553
 
 
-Installation and libraries needed:
-
-```{r packages, echo=FALSE}
+```{r packages, echo=FALSE, results='hide'}
 installifnot <- function (pkg){
   if (!require(pkg, character.only=T)){
   source("http://bioconductor.org/install")
@@ -46,7 +44,9 @@ BiocManager::install("annotate")
 installifnot("scatterplot3d")
 ```
 
-```{r libraries, echo=FALSE}
+Libraries needed:
+
+```{r libraries, echo=TRUE, results='hide'}
 library(methods)
 library(Biobase)
 library(BiocManager)
@@ -77,10 +77,11 @@ To understand the effect of controlled exposure to ethanol on gene expression, l
 First we download the GEO dataset GSE52553 and since is has a sample size of 84, we choose a subset of it containing 12 samples. Those are balanced according to the existent groups.
 
 
-```{r description, echo=FALSE}
+```{r description, echo=TRUE, results='hide'}
 gse <- getGEO("GSE52553")
 eset<-gse[[1]]
-rdeset<-(eset[1:11,c(1,2,3,4,43,44,65,66,69,70,29,30)])
+
+rdeset<-(eset[1:11,c(1,3,2,4,43,44,66,70,30,29,69,65)])
 
 dim(exprs(rdeset))
 dim(exprs(eset))
@@ -93,15 +94,21 @@ targets
 
 
 ```{r plots, echo=TRUE}
+pcs<-prcomp(exprs(rdeset))
 
 print(paste0('Mean of st.deviation = ',mean(pcs$sdev)))
 
-pcs<-prcomp(exprs(rdeset))
 barplot(pcs$sdev, col='purple', main='Un-normalized expression set')
 
 plot(pcs$rotation[,1], pcs$rotation[,2], main="Representation of first two principal components", col='purple')
 
 boxplot(pcs, col='purple', main='Boxplot expression set')
+boxplot(exprs(rdeset), col='purple', main='Boxplot of all samples')
+
+n<- matrix(rnorm(targets))
+
+hist(n, col='purple', main='Normalized expression set')
+
 
 ```
 
@@ -109,26 +116,68 @@ boxplot(pcs, col='purple', main='Boxplot expression set')
 
 - Information of the experimental design:
 
-Response variable: Gene expression
-Depends on: ethanol Treatment and being alcoholic or not
-Factors and groups: Treatment/no treatment and alcoholic/non-alcoholic(control)
-Sample size: 12 (84 originally), 3 samples belonging to each group
-Experimental units per combination of factors: 3
-Type of experimental design: Randomized block design
-Replicate type: Biological
+Response variable: Gene expression  
+Depends on: ethanol Treatment and being alcoholic or not  
+Factors and groups: Treatment/no treatment and alcoholic/non-alcoholic(control)  
+Sample size: 12 (84 originally), 3 samples belonging to each group  
+Experimental units per combination of factors: 3  
+Type of experimental design: Block design  
+Replicate type: Biological  
 
-In the study the variable sex (female or male) is also specified, but we will ignore it.
+In the study the variable sex (female or male) is also specified, but we will ignore it.  
 
 
--Comparisons to be performed:
+-Comparisons to be performed:  
 Between the parenthesis there are the number of samples of each group.
 Since we want to know the effect of both, alcohol and treatment with ethanol, to gene expression we will have to perform the following comparisons.
 
+g1 = no tretment, alcoholic  
+g2 = treatment, alcoholic  
+g3 = no treatment, non-alcoholic  
+g4 = treatment, non-alcoholic  
+
+g1 vs g2  
+g1 vs g4  
+g3 vs g2  
+g3 vs g4  
 
 
 
+- Build a design and contrast matrix:
+
+```{r design matrix}
+treat<-targets$source_name_ch1
+lev<-factor(treat,levels = unique(treat))
+design <- model.matrix(~0+lev)
+colnames(design)<-c('g1','g2','g3','g4')
+print(design)
+```
+
+```{r contrast matrix}
+cont.matrix1<-makeContrasts(g1-g2,g1-g4,g3-g2,g3-g4,levels = design)
+fit1<-lmFit(rdeset,design)
+fit.main1 <-contrasts.fit(fit1,cont.matrix1)
+fit.main1<-eBayes(fit.main1)
+cont.matrix1
+
+```
 
 
+- Build the topTable and a volcano plot:
+
+```{r toptable and volcano plot}
+topTab <-  topTable (fit.main1, number=nrow(fit.main1), adjust="fdr",lfc=abs(3))
+topTab
+
+volcanoplot(fit.main1, highlight=10, names=fit.main1$ID, 
+            main=paste("Differentially expressed genes",colnames(cont.matrix1), sep="\n"))
+abline(v=c(-1,1))
+
+volcanoplot(fit.main1, highlight=10, names=fit.main1$ID, 
+            main="Differentially expressed genes",colnames(cont.matrix1))
+abline(v=c(-1,1))
+
+```
 
 
 
